@@ -41,6 +41,7 @@
             cursor: pointer;
             transition: all 0.2s;
             font-size: 0.9rem;
+            box-sizing: border-box;
         }
 
         .mode-btn:hover, .menu-btn:hover, .close-btn:hover {
@@ -52,8 +53,9 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 100vw;
             height: 100%;
+            box-sizing: border-box;
             background: rgba(0, 0, 0, 0.95);
             color: #00ff00;
             display: none;
@@ -114,6 +116,9 @@
             .auto-dir {
                 display: block;
                 margin-bottom: 10px;
+            }
+            .overlay {
+                padding: 15px;
             }
         }
 
