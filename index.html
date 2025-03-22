@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pausak.com - Personal Website of Aleks Pausak</title>
+    <meta name="description" content="This website serves as the personal website for me Aleks Pausak."/>
+    <style>
+        body {
+            background: #000000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .top-right, .top-left {
+            position: fixed;
+            top: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .top-right {
+            right: 10px;
+        }
+
+        .top-left {
+            left: 10px;
+        }
+
+        .mode-btn, .menu-btn, .close-btn {
+            background: none;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .mode-btn:hover, .menu-btn:hover, .close-btn:hover {
+            background: #00ff00;
+            color: #000000;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            color: #00ff00;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 20px;
+            z-index: 2000;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        .overlay h2 {
+            margin-top: 0;
+        }
+
+        .close-btn {
+            margin-bottom: 20px;
+        }
+
+        .boot {
+            padding: 20px;
+            max-width: 900px;
+            margin: 80px auto 0 auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        a {
+            color: #00ff00;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        input.terminal-input {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            font-size: 1rem;
+            width: 70%;
+            caret-color: #00ff00;
+            padding: 0;
+            margin: 0;
+        }
+
+        input.terminal-input:disabled {
+            background: transparent;
+            color: #00ff00;
+        }
+
+        @media (max-width: 768px) {
+            .auto-dir {
+                display: block;
+                margin-bottom: 10px;
+            }
+        }
+
+        .crt-flicker {
+            animation: flicker 1s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.98; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-left">
+        <button class="menu-btn" onclick="toggleOverlay()">MENU</button>
+    </div>
+
+    <div class="top-right">
+        <button class="mode-btn" onclick="setMode('msdos')">MS-DOS</button>
+        <button class="mode-btn" onclick="setMode('terminal')">TERMINAL</button>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <button class="close-btn" onclick="toggleOverlay()">CLOSE</button>
+        <h2>About Pausak.com</h2>
+        <p>This website is the personal website of Aleks Pausak. It's a bit of a playground for me to experiment and have some fun. Below are some links to my social profiles and an e-mail address you can contact me on.</p>
+        <p>BTW only listing commands work in the command lines.</p>
+        <div>
+            <p><a href="https://www.linkedin.com/in/apausak/">LINKEDIN</a></p>
+            <p><a href="https://x.com/apausak">X</a></p>
+            <p><a href="https://github.com/pausak">GITHUB</a></p>
+            <p><a href="mailto=mailto%3Aglass.trekker602%40passmail.net%3Fsubject%3DEmail%2Bfrom%2BPausak.com">EMAIL</a></p>
+        </div>
+    </div>
+
+    <div class="boot crt-flicker" id="boot"></div>
+
+    <script>
+        const bootEl = document.getElementById('boot');
+        const overlay = document.getElementById('overlay');
+
+        let currentMode = 'msdos';
+
+        const files = [
+            { name: "LINKEDIN", link: "https://www.linkedin.com/in/apausak/" },
+            { name: "X", link: "https://x.com/apausak" },
+            { name: "GITHUB", link: "https://github.com/pausak" },
+            { name: "EMAIL", link: "mailto=mailto%3Aglass.trekker602%40passmail.net%3Fsubject%3DEmail%2Bfrom%2BPausak.com" }
+        ];
+
+        const bootSequences = {
+            msdos: [
+                "Phoenix BIOS Version 4.04  Copyright 1985-1995 Phoenix Technologies Ltd.",
+                "CPU = Intel 486DX2 66MHz",
+                "Base Memory: 640K",
+                "Extended Memory: 15360K",
+                "Hard Disk 0: ST3660A",
+                "CD-ROM: MSCDEX Version 2.25",
+                "",
+                "Starting MS-DOS...",
+                "MS-DOS Version 6.22",
+                "",
+                "C:\\> cd pausak",
+                ""
+            ],
+            terminal: [
+                "GNU GRUB version 0.97",
+                "Loading Linux 2.4.27-2-386...",
+                "Uncompressing Linux... Ok, booting the kernel.",
+                "",
+                "Welcome to Unix System V Release 4.2",
+                "login: root",
+                "Password: ******",
+                "Last login: Thu Mar 21 14:55:23 on tty1",
+                "root@localhost:~# cd pausak",
+                ""
+            ]
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            bootEl.innerHTML = '';
+            runBootSequence();
+        }
+
+        function toggleOverlay() {
+            overlay.classList.toggle('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                toggleOverlay();
+            }
+        });
+
+        function runBootSequence() {
+            const lines = bootSequences[currentMode];
+            let i = 0;
+
+            function printNextLine() {
+                if (i < lines.length) {
+                    const line = document.createElement('div');
+                    line.textContent = lines[i];
+                    bootEl.appendChild(line);
+                    i++;
+                    setTimeout(printNextLine, 500);
+                } else {
+                    if (window.innerWidth <= 768) {
+                        renderDirOutput();
+                    }
+                    createPrompt();
+                }
+            }
+
+            printNextLine();
+        }
+
+        function createPrompt() {
+            const symbol = currentMode === 'msdos' ? 'C:\\PAUSAK>' : '/root/pausak#';
+            const promptLine = document.createElement('div');
+            promptLine.innerHTML = `${symbol}<input class="terminal-input" autofocus>`;
+            bootEl.appendChild(promptLine);
+
+            const cmdInput = promptLine.querySelector('input');
+            cmdInput.focus();
+
+            cmdInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const cmdText = cmdInput.value.trim().toLowerCase();
+                    const staticInput = document.createElement('span');
+                    staticInput.textContent = cmdInput.value;
+                    promptLine.replaceChild(staticInput, cmdInput);
+
+                    if (cmdText === 'dir' || cmdText === 'ls') {
+                        renderDirOutput();
+                    } else if (cmdText === 'clear') {
+                        bootEl.innerHTML = '';
+                        runBootSequence();
+                        return;
+                    } else {
+                        const invalid = document.createElement('div');
+                        invalid.textContent = `'${cmdText}' is not recognized.`;
+                        bootEl.appendChild(invalid);
+                    }
+                    createPrompt();
+                }
+            });
+        }
+
+        function renderDirOutput() {
+            const output = document.createElement('div');
+            if (currentMode === 'msdos') {
+                output.innerHTML = ` Volume in drive C is DOS622\n Directory of C:\\PAUSAK\n\n` +
+                    files.map(f => `<a href="${f.link}" target="_blank">${f.name}.EXE</a>     25,344 bytes 03-22-25  12:00p`).join('\n');
+            } else {
+                output.innerHTML = `total ${files.length * 16}\n` +
+                    files.map(f => `-rwxr-xr-x 1 user user 16384 Mar 22 12:00 <a href="${f.link}" target="_blank">${f.name.toLowerCase()}.sh</a>`).join('\n');
+            }
+            output.classList.add('auto-dir');
+            bootEl.appendChild(output);
+        }
+
+        runBootSequence();
+    </script>
+</body>
+
+</html>
