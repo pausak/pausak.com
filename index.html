@@ -168,7 +168,7 @@
             <p><a href="https://www.linkedin.com/in/apausak/">LINKEDIN</a></p>
             <p><a href="https://x.com/apausak">X</a></p>
             <p><a href="https://github.com/pausak">GITHUB</a></p>
-            <p><a href="mailto=mailto%3Aglass.trekker602%40passmail.net%3Fsubject%3DEmail%2Bfrom%2BPausak.com">EMAIL</a></p>
+            <p><a href="mailto:mailto%3Aglass.trekker602%40passmail.net%3Fsubject%3DEmail%2Bfrom%2BPausak.com">EMAIL</a></p>
         </div>
         <div class="separator"></div>
         <h2>Stuff</h2>
@@ -251,14 +251,21 @@
                     i++;
                     setTimeout(printNextLine, 500);
                 } else {
-                    if (window.innerWidth <= 768) {
-                        renderDirOutput();
-                    }
-                    createPrompt();
+                    autoDirCommand();
                 }
             }
 
             printNextLine();
+        }
+
+        function autoDirCommand() {
+            const symbol = currentMode === 'msdos' ? 'C:\\PAUSAK>' : '/root/pausak#';
+            const dirCmd = currentMode === 'msdos' ? 'dir' : 'ls';
+            const promptLine = document.createElement('div');
+            promptLine.textContent = `${symbol} ${dirCmd}`;
+            bootEl.appendChild(promptLine);
+            renderDirOutput();
+            createPrompt();
         }
 
         function createPrompt() {
